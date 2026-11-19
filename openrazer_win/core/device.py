@@ -146,8 +146,14 @@ class DeviceError(Exception):
 
 #: Product ids whose onboard button memory has been read and written on real
 #: hardware.  The commands are not in upstream OpenRazer, so nothing else is
-#: offered them until someone checks.
-ONBOARD_BUTTON_PIDS = frozenset({0x0099})  # Basilisk V3
+#: offered them until someone checks.  The Viper Ultimate's four side buttons
+#: all report as back/forward to Windows, so only onboard bindings can tell the
+#: right-hand pair from the left.
+ONBOARD_BUTTON_PIDS = frozenset({
+    0x0099,  # Basilisk V3
+    0x007A,  # Viper Ultimate (wired)
+    0x007B,  # Viper Ultimate (wireless receiver)
+})
 
 #: Metadata block of an onboard profile: 250 bytes, read 75 at a time, with the
 #: profile's name as ASCII from 0x10 to 0x73.
@@ -802,7 +808,17 @@ class RazerDevice:
         """Profiles stored on the mouse: ``{active, max, profiles: [{id, name}]}``."""
         self._require_onboard()
         with self._lock:
-            inventory = self._onboard(0x05, 0x81, 0x00)
+            try:
+                inventory = self._onboard(0x05, 0x81, 0x00)
+            except DeviceError as error:
+                if error.status not in (Status.FAILURE, Status.NOT_SUPPORTED):
+                    raise
+                inventory = b'\0'
+            if not any(inventory[1:]):
+                # A mouse that keeps no profile list (no profile button) still has
+                # profile 0, the bindings in use, which reads and writes like any other.
+                self._no_profile_list = True
+                return {'active': 0, 'max': 0, 'profiles': [{'id': 0, 'name': None}]}
             active = self.get_active_onboard_profile()
             profiles = [{'id': pid, 'name': self._onboard_profile_name(pid)}
                         for pid in inventory[1:] if pid]
@@ -811,6 +827,8 @@ class RazerDevice:
     def get_active_onboard_profile(self) -> Optional[int]:
         """The profile the mouse is on -- one read, cheap enough to poll for the
         profile button.  ``None`` on firmware that cannot tell."""
+        if getattr(self, '_no_profile_list', False):
+            return 0  # agrees with get_onboard_profiles, so nothing looks switched
         try:
             return self._onboard(0x05, 0x84, 0x00)[0]
         except DeviceError as error:
