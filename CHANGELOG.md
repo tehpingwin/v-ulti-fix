@@ -6,6 +6,14 @@ uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.6-viper] - 2026-11-19
+
+### Added
+
+- Onboard button remapping on the Razer Viper Ultimate (1532:007A wired, 1532:007B wireless), so
+  the right-hand side buttons can be reassigned separately from the left. A mouse that keeps no
+  onboard profile list edits profile 0.
+
 ## [1.6.6] - 2026-11-18
 
 ### Added
