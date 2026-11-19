@@ -1,3 +1,6 @@
+Vibe Coded Fix for the great utility that allows for full button control on the Viper Ultimate (Wireless).
+
+
 <div align="center">
 
 # OpenRazer for Windows
