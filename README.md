@@ -1,4 +1,4 @@
-Vibe Coded Fix for the great utility that allows for full button control on the Viper Ultimate (Wireless).
+Vibe Coded Fix for the great utility that allows for full button control on the Viper Ultimate (Wireless). Tested on my own unit of the Viper Ultimate and nothing more.
 
 
 <div align="center">
