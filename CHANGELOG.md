@@ -6,6 +6,13 @@ uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.6-viper2] - 2026-11-19
+
+### Changed
+
+- The Viper Ultimate's right-hand side buttons are named RBack and RForward instead of
+  Button 0x06 and Button 0x07.
+
 ## [1.6.6-viper] - 2026-11-19
 
 ### Added
